@@ -7,6 +7,7 @@ public class PlayerControllerX : MonoBehaviour
     private Rigidbody playerRb;
     private float speed = 500;
     private GameObject focalPoint;
+    public ParticleSystem particleEffect;
 
     public bool hasPowerup;
     public GameObject powerupIndicator;
@@ -23,18 +24,32 @@ public class PlayerControllerX : MonoBehaviour
 
     void Update()
     {
+        // Player should get a speed boost while pressing spacebar
+        if (Input.GetKey(KeyCode.Space) && speed == 500)
+        {
+            speed += 400;
+        }
+        else
+        {
+            speed = 500;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            particleEffect.Play();
+            Debug.Log("Play particles");
+        } else if(Input.GetKeyUp(KeyCode.Space))
+        {
+            particleEffect.Stop();
+            Debug.Log("Stop particles");
+        }
+
         // Add force to player in direction of the focal point (and camera)
         float verticalInput = Input.GetAxis("Vertical");
         playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed * Time.deltaTime); 
 
         // Set powerup indicator position to beneath player
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
-
-        // Player should get a speed boost while pressing spacebar
-        if (Input.GetKey(KeyCode.Space) && speed == 500)
-        {
-            speed += 400;
-        }
     }
 
     // If Player collides with powerup, activate powerup
